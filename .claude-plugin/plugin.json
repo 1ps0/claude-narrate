@@ -1,0 +1,8 @@
+{
+  "name": "narrate",
+  "version": "0.1.0",
+  "description": "Speak what Claude Code just did, through local macOS say. Every tool call, every failure, the first line of every reply. No cloud, no keys.",
+  "author": { "name": "Alex Evers" },
+  "license": "MIT",
+  "keywords": ["tts", "voice", "say", "narration", "accessibility", "adhd"]
+}
