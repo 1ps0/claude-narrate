@@ -36,14 +36,14 @@
         ]
       }
     ],
-    "PreToolUse": [
+    "MessageDisplay": [
       {
         "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/narrate.sh",
             "async": true,
-            "timeout": 20
+            "timeout": 10
           }
         ]
       }
