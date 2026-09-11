@@ -27,7 +27,7 @@ for `spd-say` (one line in `hooks/narrate.sh`, untested).
 | Agent | `spawned <description>` |
 | a tool failure | `Bash failed: <first 80 chars of the error>` |
 | Stop | first line of the reply, up to 200 chars, markdown stripped |
-| MessageDisplay | Claude's own lead-in sentence as it renders ("Fixing the strip bug, then firing the hook") — after one, the next command's description is skipped as redundant |
+| MessageDisplay | Claude's own lead-in sentence as it renders ("Fixing the strip bug, then firing the hook") — after one, the next command's description is skipped as redundant. Start a fresh session after installing: added mid-session, this event did not reach the hook in testing. |
 
 Utterances are serialized; one that has waited more than 3 seconds is
 dropped as stale rather than spoken late.
