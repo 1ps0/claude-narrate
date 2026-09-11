@@ -33,6 +33,7 @@ esac
 [ -z "$text" ] && exit 0
 text=$(sed -E 's/[][`*_#]//g' <<<"$text")
 
+mkdir -p "$root/.claude"
 printf '%s\t%s\t%s\n' "$(date -u +%FT%TZ)" "$ev" "$text" >> "$root/.claude/narrate.log"
 [ "${NARRATE_DRY:-0}" = "1" ] && { echo "[dry] $text"; exit 0; }
 

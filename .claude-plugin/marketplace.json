@@ -1,0 +1,7 @@
+{
+  "name": "claude-narrate",
+  "owner": { "name": "Alex Evers", "url": "https://github.com/1ps0" },
+  "plugins": [
+    { "name": "narrate", "source": "./", "description": "Speak what Claude Code just did, through local macOS say." }
+  ]
+}

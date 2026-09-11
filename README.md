@@ -10,7 +10,7 @@ line of each command is what gets spoken, not the command.
 ## Install
 
 ```
-/plugin marketplace add alexevers/claude-narrate
+/plugin marketplace add 1ps0/claude-narrate
 /plugin install narrate@claude-narrate
 ```
 
