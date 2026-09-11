@@ -39,6 +39,21 @@ write_shape() {
   [ -n "$t" ] && printf ', titled %s' "$t" || printf ', %s lines' "$(nlines "$c")"
 }
 
+# Claude's own lead-in: the last assistant text block in this turn, if short
+# enough to be a lead-in rather than a report. Walks the transcript backwards,
+# stopping at the human prompt. Empty when there is none.
+lead_in() {
+  local tp; tp=$(jq -r '.transcript_path // ""' <<<"$in"); [ -r "$tp" ] || return 0
+  tail -60 "$tp" | jq -rs '
+    reverse | map(select(.type=="assistant" or .type=="user"))
+    | first(.[] | select(
+        (.type=="user" and ((.message.content|type)=="string" or ([.message.content[]?|select(.type=="tool_result")]|length)==0))
+        or (.type=="assistant" and .message.content[0].type=="text")))
+    | if .type=="assistant" then .message.content[0].text else "" end' 2>/dev/null \
+  | awk 'length($0)>0 && length($0)<=400 {print; exit}' | cut -c1-160
+}
+mark="/tmp/claude-narrate.lead.$(jq -r '.tool_use_id // "none"' <<<"$in")"
+
 case "$ev" in
   PreToolUse)
     text=$(lead_in); [ -z "$text" ] && exit 0
@@ -66,20 +81,6 @@ esac
 [ -z "$text" ] && exit 0
 text=$(sed -E 's/[][`*_#]//g' <<<"$text")
 
-# Claude's own lead-in: the last assistant text block in this turn, if short
-# enough to be a lead-in rather than a report. Walks the transcript backwards,
-# stopping at the human prompt. Empty when there is none.
-lead_in() {
-  local tp; tp=$(jq -r '.transcript_path // ""' <<<"$in"); [ -r "$tp" ] || return 0
-  tail -60 "$tp" | jq -rs '
-    reverse | map(select(.type=="assistant" or .type=="user"))
-    | first(.[] | select(
-        (.type=="user" and ((.message.content|type)=="string" or ([.message.content[]?|select(.type=="tool_result")]|length)==0))
-        or (.type=="assistant" and .message.content[0].type=="text")))
-    | if .type=="assistant" then .message.content[0].text else "" end' 2>/dev/null \
-  | awk 'length($0)>0 && length($0)<=400 {print; exit}' | cut -c1-160
-}
-mark="/tmp/claude-narrate.lead.$(jq -r '.tool_use_id // "none"' <<<"$in")"
 mkdir -p "$root/.claude"
 printf '%s\t%s\t%s\n' "$(date -u +%FT%TZ)" "$ev" "$text" >> "$root/.claude/narrate.log"
 [ "${NARRATE_DRY:-0}" = "1" ] && { echo "[dry] $text"; exit 0; }
